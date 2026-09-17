@@ -1,7 +1,7 @@
 class_name ColorTyperEffect extends TyperEffect
 
 func effect_char(char: Typer.Char, params: Dictionary, time: int) -> Typer.Char:
-	var color_string: String = params.get("color")
+	var color_string: String = params.get("color", "white")
 	var color_names_array: Array = Array(color_string.split(","))
 	
 	var colors_array: Array[Color] = []

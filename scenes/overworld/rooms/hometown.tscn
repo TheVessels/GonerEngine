@@ -304,7 +304,7 @@ func _process(_delta: float) -> void:
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_552oo"]
 size = Vector2(45, 51)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_mhaeg"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_tpxho"]
 resource_local_to_scene = true
 animations = [{
 "frames": [{
@@ -477,7 +477,7 @@ shape = SubResource("RectangleShape2D_552oo")
 
 [node name="RealisticExplosion" parent="." unique_id=467437345 instance=ExtResource("14_s20un")]
 position = Vector2(117.5, 63.5)
-sprite_frames = SubResource("SpriteFrames_mhaeg")
+sprite_frames = SubResource("SpriteFrames_tpxho")
 speed_scale = 0.5
 loop = true
 volume = 0.1

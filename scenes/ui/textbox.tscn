@@ -2,15 +2,9 @@
 
 [ext_resource type="Script" uid="uid://cx1nqx718bnfa" path="res://scripts/classes/textbox.gd" id="1_hyn88"]
 [ext_resource type="PackedScene" uid="uid://tw5hkjn0a81b" path="res://scenes/ui/dark_box.tscn" id="2_fto3e"]
-[ext_resource type="AudioStream" uid="uid://b73flekf0aj0h" path="res://sounds/ui/select.wav" id="3_fto3e"]
 [ext_resource type="PackedScene" uid="uid://d1tmmpanucxap" path="res://scenes/ui/light_box.tscn" id="3_seire"]
 [ext_resource type="Texture2D" uid="uid://bu708k77nhnyg" path="res://sprites/actors/susie/faces/sincere.png" id="4_hdjaa"]
-[ext_resource type="AudioStream" uid="uid://cp7rxhw17v65x" path="res://sounds/ui/menumove.wav" id="4_seire"]
-[ext_resource type="FontFile" uid="uid://dcrh8bap8gwdn" path="res://fonts/main_mono.ttf" id="5_okh7m"]
-[ext_resource type="AudioStream" uid="uid://b2y0nkg6g0lnd" path="res://sounds/voice/susie.wav" id="6_k71a8"]
-
-[sub_resource type="FontVariation" id="FontVariation_o60sd"]
-base_font = ExtResource("5_okh7m")
+[ext_resource type="Script" uid="uid://bpgmegg2lddas" path="res://scripts/classes/typer.gd" id="9_hdjaa"]
 
 [node name="Textbox" type="Control" unique_id=810857812]
 layout_mode = 3
@@ -20,12 +14,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hyn88")
-talk_sounds = Array[AudioStream]([ExtResource("6_k71a8"), ExtResource("3_fto3e"), ExtResource("4_seire")])
-lower_range = -0.09999999999999964
-upper_range = 0.1
 
 [node name="DarkBox" parent="." unique_id=619300672 instance=ExtResource("2_fto3e")]
-visible = false
 layout_mode = 0
 offset_left = 24.0
 offset_top = 312.0
@@ -49,44 +39,21 @@ offset_bottom = 401.0
 scale = Vector2(2, 2)
 texture = ExtResource("4_hdjaa")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1309665849]
-layout_mode = 0
+[node name="DialogueText" type="Control" parent="." unique_id=785439090]
+custom_minimum_size = Vector2(400, 96)
+anchors_preset = 0
 offset_left = 174.0
 offset_top = 340.0
-offset_right = 590.0
+offset_right = 574.0
 offset_bottom = 453.0
-theme_override_constants/separation = 16
-
-[node name="asterisks" type="Label" parent="HBoxContainer" unique_id=1751368151]
-visible = false
-custom_minimum_size = Vector2(16, 0)
-layout_mode = 2
-size_flags_vertical = 1
-theme_override_constants/line_spacing = 8
-theme_override_fonts/font = ExtResource("5_okh7m")
-theme_override_font_sizes/font_size = 32
-text = " "
-autowrap_mode = 1
+script = ExtResource("9_hdjaa")
+font_size = 32
 visible_characters = 0
 visible_ratio = 0.0
-
-[node name="dialoguetext" type="RichTextLabel" parent="HBoxContainer" unique_id=973656905]
-custom_minimum_size = Vector2(400, 96)
-layout_mode = 2
-theme_override_constants/line_separation = 4
-theme_override_fonts/normal_font = SubResource("FontVariation_o60sd")
-theme_override_font_sizes/normal_font_size = 32
-bbcode_enabled = true
-scroll_active = false
-tab_size = 2
-visible_characters_behavior = 1
-
-[node name="talkblip" type="AudioStreamPlayer" parent="." unique_id=36271857]
-stream = ExtResource("6_k71a8")
-volume_db = -10.0
-max_polyphony = 15
+metadata/_custom_type_script = "uid://bpgmegg2lddas"
 
 [node name="References" type="Node2D" parent="." unique_id=1801481437]
+visible = false
 modulate = Color(1, 1, 1, 0.337255)
 
 [node name="Refdark" type="Sprite2D" parent="References" unique_id=1772832361]

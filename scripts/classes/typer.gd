@@ -22,7 +22,7 @@ var text_lines: PackedStringArray = []
 
 var write_condition: bool:
 	get:
-		return (pause <= 0.0)
+		return (visible_characters > -1 and pause <= 0.0)
 
 var typer_shader: TyperShader = null
 
@@ -51,6 +51,7 @@ var typer_shader: TyperShader = null
 		font_size = new
 		if Engine.is_editor_hint():
 			font_size = new
+			line_height = 18 * (font_size / 16)
 			prepare_spacing()
 			queue_redraw()
 
@@ -65,6 +66,8 @@ var _visible_characters := -1
 	get:
 		if _visible_characters == -1:
 			return 1.0
+		if _visible_characters == 0:
+			return 0.0
 		return _visible_characters / float(get_parsed_text().length())
 	set(new):
 		if new == 1.0:
@@ -92,6 +95,9 @@ func get_parsed_text() -> String:
 	text_without_tags = regex.sub(text_without_tags, "", true)
 	return text_without_tags
 
+# kinda misleading name, it actually breaks up text_lines even more
+# based on dynamic linebreaks along with the manual ones that text_lines already
+# accounted for
 func add_linebreaks():
 	var new_text_lines: PackedStringArray = []
 	for line in text_lines:
@@ -131,17 +137,25 @@ func add_linebreaks():
 func prepare_lines():
 	var commanded_text = parse_commands()
 	text_lines = commanded_text.c_escape().split("\\n")
-	for i in text_lines.size():
-		text_lines.set(i, text_lines.get(i).c_unescape())
 	add_linebreaks()
-	
+	for i in text_lines.size():
+		var unescaped_text = text_lines.get(i).c_unescape()
+		text_lines.set(i, unescaped_text)
+
 func prepare_spacing():
+	line_height = 18 * (font_size / 16)
 	text_gap = Vector2(font_size/2, 0.0)
 	# thx sixtyfive for this cool maths
 	max_line_chars = floor(self.size.x / text_gap.x)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	caller = self.get_parent()
+	if caller != null:
+		print("WAAAAAAAAIT I HAVE A PARENT")
+		await caller.ready
+		print("ok im ready", text)
+		
 	prepare_spacing()
 	prepare_lines()
 	queue_redraw()
@@ -163,10 +177,13 @@ func _physics_process(delta: float) -> void:
 	
 	
 	if Input.is_action_just_pressed("confirm") and !animating:
-		text_index += 1
-		if text_index >= text.size():
+		if text_index+1 == text.size():
+			if caller and destroy_caller:
+				caller.queue_free()
+				return
 			queue_free()
 			return
+		text_index += 1
 		
 		prepare_lines()
 		visible_ratio = 0.0
@@ -341,7 +358,7 @@ func write_char():
 	if write_condition:
 		visible_characters += 1
 		current_char = get_parsed_text()[visible_characters-1]
-		if !silent_chars.has(current_char):
+		if !silent_chars.has(current_char) and !talk_sounds.is_empty():
 			play_talk_sound()
 
 func play_talk_sound():
@@ -539,5 +556,6 @@ static var typer_effects_registry: Dictionary = {
 	"color": ColorTyperEffect.new(),
 	"shake": ShakeTyperEffect.new(),
 	"dark": DarkTyperEffect.new(),
-	"light": LightTyperEffect.new()
+	"light": LightTyperEffect.new(),
+	"shadow": ShadowTyperEffect.new()
 }
