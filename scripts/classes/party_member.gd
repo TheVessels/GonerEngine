@@ -94,13 +94,13 @@ func party_member_process(delta: float) -> void:
 	
 	# TODO I need to make this animation logic better.
 	var speed_scale := 2.0 if running else 1.0
-	if $AnimatedSprite2D.speed_scale != speed_scale:
-		$AnimatedSprite2D.speed_scale = speed_scale
+	if sprite.speed_scale != speed_scale:
+		sprite.speed_scale = speed_scale
 	
 	var anim_suffix := calc_animation_from_facing(facing)
 	if walking:
 		play_animation_preserve("walk_" + anim_suffix)
-	#if not walking and $AnimatedSprite2D.animation != "face_" + anim_suffix:
+	#if not walking and sprite.animation != "face_" + anim_suffix:
 		#play_animation_preserve("face_" + anim_suffix)
 	
 	process_anim_state(dtmult)
@@ -164,15 +164,15 @@ func process_anim_state(dtmult: float):
 	# print(anim_state)
 	if walking:
 		anim_state = 8.0
-		# walk_frame = $AnimatedSprite2D.frame
-		# walk_progress = $AnimatedSprite2D.frame_progress
+		# walk_frame = sprite.frame
+		# walk_progress = sprite.frame_progress
 	elif anim_state > 0.0:
 		var last_anim_state = anim_state
 		anim_state -= dtmult
 		# print('new anim_state: ', anim_state)
 		
 		if last_anim_state > 4.0 and anim_state <= 4.0:
-			$AnimatedSprite2D.pause()
+			sprite.pause()
 		elif last_anim_state > 0.0 and anim_state <= 0.0:
 			var animation := "face_" + calc_animation_from_facing(facing)
 			play_animation_face(animation)
@@ -265,28 +265,28 @@ func do_interact():
 # Plays an animation, while preserving
 # the frame and frame progress of the previous animation.
 func play_animation_preserve(animation: StringName):
-	if $AnimatedSprite2D.animation == animation and $AnimatedSprite2D.is_playing():
+	if sprite.animation == animation and sprite.is_playing():
 		return
 	
 	var face := String(animation).begins_with("face_")
-	var frame: int = walk_frame if face else $AnimatedSprite2D.frame
-	var prog: float = walk_progress if face else $AnimatedSprite2D.frame_progress
-	$AnimatedSprite2D.play(animation)
-	$AnimatedSprite2D.frame = frame
-	$AnimatedSprite2D.frame_progress = prog
+	var frame: int = walk_frame if face else sprite.frame
+	var prog: float = walk_progress if face else sprite.frame_progress
+	sprite.play(animation)
+	sprite.frame = frame
+	sprite.frame_progress = prog
 
 func play_animation_load(animation: StringName):
-	$AnimatedSprite2D.play(animation)
-	$AnimatedSprite2D.frame = walk_frame
-	$AnimatedSprite2D.frame_progress = walk_progress
+	sprite.play(animation)
+	sprite.frame = walk_frame
+	sprite.frame_progress = walk_progress
 
 func play_animation_face(animation: StringName):
-	walk_frame = $AnimatedSprite2D.frame
+	walk_frame = sprite.frame
 	walk_progress = 1.0
-	$AnimatedSprite2D.play(animation)
+	sprite.play(animation)
 
 func play_animation(animation: StringName):
-	$AnimatedSprite2D.play(animation)
+	sprite.play(animation)
 
 class CaterpillarInfo:
 	var pos: Vector2
