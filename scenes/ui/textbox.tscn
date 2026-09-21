@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cx1nqx718bnfa" path="res://scripts/classes/textbox.gd" id="1_hyn88"]
 [ext_resource type="PackedScene" uid="uid://tw5hkjn0a81b" path="res://scenes/ui/dark_box.tscn" id="2_fto3e"]
+[ext_resource type="AudioStream" uid="uid://cq00iq5366d5x" path="res://sounds/voice/random_voice_example.tres" id="2_hyn88"]
 [ext_resource type="PackedScene" uid="uid://d1tmmpanucxap" path="res://scenes/ui/light_box.tscn" id="3_seire"]
 [ext_resource type="Texture2D" uid="uid://bu708k77nhnyg" path="res://sprites/actors/susie/faces/sincere.png" id="4_hdjaa"]
 [ext_resource type="Script" uid="uid://bpgmegg2lddas" path="res://scripts/classes/typer.gd" id="9_hdjaa"]
@@ -14,6 +15,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hyn88")
+talk_audio = ExtResource("2_hyn88")
 
 [node name="DarkBox" parent="." unique_id=619300672 instance=ExtResource("2_fto3e")]
 layout_mode = 0
@@ -48,8 +50,7 @@ offset_right = 574.0
 offset_bottom = 453.0
 script = ExtResource("9_hdjaa")
 font_size = 32
-visible_characters = 0
-visible_ratio = 0.0
+talk_audio = ExtResource("2_hyn88")
 metadata/_custom_type_script = "uid://bpgmegg2lddas"
 
 [node name="References" type="Node2D" parent="." unique_id=1801481437]

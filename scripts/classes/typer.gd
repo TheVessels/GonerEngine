@@ -4,6 +4,11 @@ class_name Typer extends Control
 var time: int = 0
 var time_loopback: int = 1225
 
+var type_speed: float = 1.0
+# The amount of chars to appear for the currently processing frame
+# Needed to make different type speeds work on all FPS
+var frame_char_amount: int
+
 var silent_chars: Array[String] = [" ", "^", "!", ".", "?", ",", ":", "/", "\\", "|", "*", "\n"]
 var current_char: String
 
@@ -22,7 +27,7 @@ var text_lines: PackedStringArray = []
 
 var write_condition: bool:
 	get:
-		return (visible_characters > -1 and pause <= 0.0)
+		return (visible_characters > -1 and pause <= 0.0 and type_timer <= 0.0)
 
 var typer_shader: TyperShader = null
 
@@ -55,8 +60,8 @@ var typer_shader: TyperShader = null
 			prepare_spacing()
 			queue_redraw()
 
-var _visible_characters := -1
-@export var visible_characters := -1:
+var _visible_characters: int = -1
+@export var visible_characters: int = -1:
 	get:
 		return _visible_characters
 	set(new):
@@ -80,11 +85,13 @@ var _visible_characters := -1
 		var clamped_ratio = clampf(new, 0.0, 1.0)
 		_visible_characters = roundi(clamped_ratio * get_parsed_text().length())
 
+var type_timer: float = 0.0
+
 @export_group("Talking Sound")
-@export var talk_sounds: Array[AudioStream]
+@export var talk_audio: AudioStream
 @export_subgroup("Random Pitch Range")
-@export_range(-1, 0, 0.1) var lower_range: float = 0.0
-@export_range(0, 1, 0.1) var upper_range: float = 0.0
+@export_range(-1, 0, 0.1) var lower_limit: float = 0.0
+@export_range(0, 1, 0.1) var upper_limit: float = 0.0
 
 # Gets the text without bbcode or commands
 func get_parsed_text() -> String:
@@ -191,14 +198,24 @@ func _physics_process(delta: float) -> void:
 	if animating and Input.is_action_just_pressed("cancel"):
 		visible_ratio = 1.0
 	
+	if pause > 0: pause -= 1
+
+func _process(delta: float) -> void:
+	var dtmult = delta*30.0
+	
+	if pause <= 0.0:
+		type_timer -= dtmult * type_speed
+	
 	if !(visible_ratio >= 1.0):
 		animating = true
 		if write_condition:
+			frame_char_amount = 1 + floor(abs(type_timer))
 			write_char()
 	else:
+		if !commands.is_empty():
+			for command in commands:
+				evaluate(command)
 		animating = false
-	
-	if pause > 0: pause -= 1
 
 func _draw() -> void:
 	#print("FONT SIZE IS 16, FONT HEIGHT IS ", get_theme_default_font().get_height())
@@ -297,10 +314,12 @@ func _draw() -> void:
 
 class CommandInfo:
 	var index: int
-	var command: String
-	func _init(idx: int, cmd: String):
+	var command_name: String
+	var command_params: String
+	func _init(idx: int, cmd_name: String, cmd_params: String):
 		index = idx
-		command = cmd
+		command_name = cmd_name
+		command_params = cmd_params
 
 # Literally just for command parsing
 func remove_bbcode(txt: String) -> String:
@@ -312,7 +331,6 @@ func remove_bbcode(txt: String) -> String:
 var commands: Array[CommandInfo] = []
 # Gets all the commands inside the dia text and adds them to the list of commands
 # while also removing them from the commanded_text
-# (the var name is kinda a misnomer since it's getting cleaned of the commands)
 func parse_commands() -> String:
 	var commanded_text = text[text_index]
 	commands.clear()
@@ -329,43 +347,43 @@ func parse_commands() -> String:
 		# erase the command from the dialogue text
 		commanded_text = commanded_text.erase(commanded_text.findn("{"+tag_content+"}"), right_index+1-left_index)
 		
-		var command = CommandInfo.new(left_index, tag_content)
+		# split tag_content into name and params
+		# this parser assumes commands are always formatted like so: cmd(...params)
+		var params_open_index = tag_content.findn("(")
+		if params_open_index == -1: break
+		var params_close_index = tag_content.findn(")")
+		if params_close_index == -1: break
+		
+		var command_params = tag_content.substr(params_open_index+1, params_close_index-1-params_open_index)
+		var command_name = tag_content.substr(0, params_open_index)
+		
+		var command = CommandInfo.new(left_index, command_name, command_params)
 		commands.append(command)
 	return commanded_text
 
-func evaluate(command, variable_names = [], variable_values = []) -> void:
-	var expression = Expression.new()
-	var error = expression.parse(command)
-	if error != OK:
-		#push_error(expression.get_error_text())
-		return
-	
-	var result = expression.execute([], self)
-	
-	if not expression.has_execute_failed() and result:
-		print(str(result))
+func evaluate(command_info: CommandInfo) -> void:
+	var command: TyperCommand = commands_registry.get(command_info.command_name)
+	command.execute_code(command_info.command_params, self)
 	
 	commands.remove_at(0)
-
-func wait(frames: int) -> void:
-	pause = frames
 
 func write_char():	
 	# Check if the index of the char you're about to write has a command queued for it
 	if commands:
 		if visible_characters == commands[0].index:
-			evaluate(commands[0].command)
+			evaluate(commands[0])
 	if write_condition:
-		visible_characters += 1
+		visible_characters += frame_char_amount
+		visible_characters = clamp(visible_characters, 0, get_parsed_text().length())
 		current_char = get_parsed_text()[visible_characters-1]
-		if !silent_chars.has(current_char) and !talk_sounds.is_empty():
+		if !silent_chars.has(current_char) and talk_audio:
 			play_talk_sound()
+		type_timer = 1.0
 
 func play_talk_sound():
-	var sound = talk_sounds.pick_random()
-	var pitch_offset = randf_range(lower_range, upper_range)
+	var pitch_offset = randf_range(lower_limit, upper_limit)
 	var player = AudioStreamPlayer.new()
-	player.stream = sound
+	player.stream = talk_audio
 	player.pitch_scale += pitch_offset
 	player.finished.connect(
 		func():
@@ -463,7 +481,6 @@ func apply_effects(typer_char: Char, effects: Array[String]) -> Char:
 	for effect in text_effects:
 		# String.split returns a PackedStringArray so we convert it into an Array[String] for convenience
 		var split_tag: Array[String] = Array(Array(effect.split(" ")), TYPE_STRING, "", null)
-		
 		var effect_name = split_tag[0]
 		
 		# Make a dictionary of OptionName:OptionValue
@@ -482,7 +499,7 @@ func apply_effects(typer_char: Char, effects: Array[String]) -> Char:
 			effect_name = effect_name.substr(0, main_value_pos)
 			tag_options[effect_name] = effect_value
 		
-		var effecter = typer_effects_registry.get(effect_name)
+		var effecter = effects_registry.get(effect_name)
 		if effecter:
 			typer_char = effecter.effect_char(typer_char, tag_options, time)
 	return typer_char
@@ -552,10 +569,15 @@ static func draw_char_color(item: RID,
 	)
 
 ## Dictionary to register every effect
-static var typer_effects_registry: Dictionary = {
+static var effects_registry: Dictionary = {
 	"color": ColorTyperEffect.new(),
 	"shake": ShakeTyperEffect.new(),
 	"dark": DarkTyperEffect.new(),
 	"light": LightTyperEffect.new(),
 	"shadow": ShadowTyperEffect.new()
+}
+## Dictionary to register every effect
+static var commands_registry: Dictionary = {
+	"wait": WaitTyperCommand.new(),
+	"speed": SpeedTyperCommand.new()
 }

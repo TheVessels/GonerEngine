@@ -7,6 +7,8 @@ class_name TextBox extends Control
 ## [br]
 ## Instead, use [method TextBox.start_dialogue] (or [method TextBox.create] if you only need a [b]TextBox[/b] node).
 
+@export var dynamic_box: bool = false
+
 @onready var dia_typer: Typer = $DialogueText
 @export_multiline("monospace") var text: Array[String] = [""]:
 	set(new):
@@ -18,10 +20,14 @@ class_name TextBox extends Control
 			text = new
 			dia_typer.text = new
 
+@export_group("Talking Sound")
+@export var talk_audio: AudioStream = load("res://sounds/voice/random_voice_example.tres")
+@export_subgroup("Random Pitch Range")
+@export_range(-1, 0, 0.1) var lower_limit: float = 0.0
+@export_range(0, 1, 0.1) var upper_limit: float = 0.0
+
 @onready var dark_box: NinePatchRect = $DarkBox
 @onready var light_box: NinePatchRect = $LightBox
-
-@export var dynamic_box: bool = false
 
 const textbox_scene: PackedScene = preload("uid://c5nrska6i801g")
 
@@ -54,6 +60,9 @@ func _exit_tree() -> void:
 func _ready():
 	dia_typer.text = text
 	dia_typer.visible_characters = 0
+	dia_typer.talk_audio = talk_audio
+	dia_typer.lower_limit = lower_limit
+	dia_typer.upper_limit = upper_limit
 	
 	if Engine.is_editor_hint(): return
 	

@@ -264,6 +264,7 @@ script/source = "extends StaticBody2D
 
 func interact() -> void:
 	var text = [
+		\"* My real name?{wait(30)}\\n* {speed(0.5)}It's{wait(20)}\\n{speed(2.0)}[shake level=1.0][color=crimson,darkred]Susie{wait(10)} Gaster[/color][/shake].{speed(1.0)}\",
 		\"* T{wait(30)}oI'm the [shake rate=50.0 level=10 connected=1][color=red][img=x32]res://sprites/example/tennatime.png[/img] Roaring Knight[/color][/shake]!\",
 		\"* wait{wait(10)} what the fuck\",
 		\"Where is my{wait(5)} aste{wait(50)}rick\",

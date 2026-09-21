@@ -32,3 +32,8 @@ signal battle_enemy_chosen(enemy: Enemy)
 signal battle_open_hero_list
 signal battle_hero_chosen
 signal battle_set_hero_action(party_member: PartyMember, action: HeroAction)
+
+# For dialogue
+signal change_face
+signal change_voice
+signal change_typer_char

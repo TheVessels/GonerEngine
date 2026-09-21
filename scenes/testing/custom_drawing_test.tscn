@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://d0ukmrnn12ao5"]
 
 [ext_resource type="Script" uid="uid://bpgmegg2lddas" path="res://scripts/classes/typer.gd" id="1_liwy2"]
-[ext_resource type="AudioStream" uid="uid://b2y0nkg6g0lnd" path="res://sounds/voice/susie.wav" id="2_7lxqq"]
 [ext_resource type="Texture2D" uid="uid://dwdjrfwgkxt7y" path="res://sprites/references/refdark.png" id="2_h2c5l"]
 
 [node name="Typer" type="Control" unique_id=532849005]
@@ -9,10 +8,10 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 58.0
-offset_top = 54.0
-offset_right = -414.0
-offset_bottom = -383.0
+offset_left = 68.0
+offset_top = 57.0
+offset_right = -404.0
+offset_bottom = -380.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_liwy2")
@@ -20,7 +19,6 @@ text = Array[String](["* [color=teal][shake connected=1][light]Dreemurr[/light] 
 [color=teal,aquamarine][shake level=1.0 connected=0]w{wait(10)}h{wait(10)}o{wait(10)}[/shake][/color] is this?[/color]", "* {wait(30)}Ruh{wait(10)}.{wait(10)}.{wait(10)}.{wait(30)}
 [color=red][shake]ok[/shake][/color]"])
 visible_characters = 34
-talk_sounds = Array[AudioStream]([ExtResource("2_7lxqq")])
 
 [node name="Label" type="Label" parent="." unique_id=2009939912]
 visible = false

@@ -1,0 +1,11 @@
+[gd_resource type="AudioStreamRandomizer" format=3 uid="uid://cq00iq5366d5x"]
+
+[ext_resource type="AudioStream" uid="uid://b2y0nkg6g0lnd" path="res://sounds/voice/susie.wav" id="1_r5i5w"]
+[ext_resource type="AudioStream" uid="uid://bqrjh2iyhh6p2" path="res://sounds/example/footstep.wav" id="2_x6m85"]
+[ext_resource type="AudioStream" uid="uid://b73flekf0aj0h" path="res://sounds/ui/select.wav" id="3_tcb6w"]
+
+[resource]
+streams_count = 3
+stream_0/stream = ExtResource("1_r5i5w")
+stream_1/stream = ExtResource("2_x6m85")
+stream_2/stream = ExtResource("3_tcb6w")
