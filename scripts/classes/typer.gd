@@ -201,6 +201,9 @@ func _physics_process(delta: float) -> void:
 	if pause > 0: pause -= 1
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint() or !is_node_ready():
+		return
+	
 	var dtmult = delta*30.0
 	
 	if pause <= 0.0:
