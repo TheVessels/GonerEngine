@@ -89,9 +89,11 @@ var type_timer: float = 0.0
 
 @export_group("Talking Sound")
 @export var talk_audio: AudioStream
+@export_range(0.1, 2.0, 0.1) var talk_pitch: float = 1.0
 @export_subgroup("Random Pitch Range")
-@export_range(-1, 0, 0.1) var lower_limit: float = 0.0
-@export_range(0, 1, 0.1) var upper_limit: float = 0.0
+@export var use_pitch_range: bool = false
+@export_range(0.1, 1.0, 0.1) var lower_limit: float = 1.0
+@export_range(1.0, 2.0, 0.1) var upper_limit: float = 1.0
 
 # Gets the text without bbcode or commands
 func get_parsed_text() -> String:
@@ -161,7 +163,7 @@ func _ready() -> void:
 	if caller != null:
 		print("WAAAAAAAAIT I HAVE A PARENT")
 		await caller.ready
-		print("ok im ready", text)
+		print("ok im ready")
 		
 	prepare_spacing()
 	prepare_lines()
@@ -181,7 +183,6 @@ func _physics_process(delta: float) -> void:
 	
 	if Engine.is_editor_hint() or !is_node_ready():
 		return
-	
 	
 	if Input.is_action_just_pressed("confirm") and !animating:
 		if text_index+1 == text.size():
@@ -206,7 +207,7 @@ func _process(delta: float) -> void:
 	
 	var dtmult = delta*30.0
 	
-	if pause <= 0.0:
+	if pause <= 0.0 and animating:
 		type_timer -= dtmult * type_speed
 	
 	if !(visible_ratio >= 1.0):
@@ -373,7 +374,7 @@ func evaluate(command_info: CommandInfo) -> void:
 func write_char():	
 	# Check if the index of the char you're about to write has a command queued for it
 	if commands:
-		if visible_characters == commands[0].index:
+		while !commands.is_empty() and visible_characters == commands[0].index:
 			evaluate(commands[0])
 	if write_condition:
 		visible_characters += frame_char_amount
@@ -384,10 +385,15 @@ func write_char():
 		type_timer = 1.0
 
 func play_talk_sound():
-	var pitch_offset = randf_range(lower_limit, upper_limit)
 	var player = AudioStreamPlayer.new()
 	player.stream = talk_audio
-	player.pitch_scale += pitch_offset
+	
+	if use_pitch_range:
+		var pitch_offset = randf_range(lower_limit, upper_limit)
+		player.pitch_scale *= pitch_offset
+	else:
+		player.pitch_scale = talk_pitch
+	
 	player.finished.connect(
 		func():
 			player.queue_free()
@@ -582,5 +588,6 @@ static var effects_registry: Dictionary = {
 ## Dictionary to register every effect
 static var commands_registry: Dictionary = {
 	"wait": WaitTyperCommand.new(),
-	"speed": SpeedTyperCommand.new()
+	"speed": SpeedTyperCommand.new(),
+	"pitch": PitchTyperCommand.new()
 }

@@ -21,10 +21,12 @@ class_name TextBox extends Control
 			dia_typer.text = new
 
 @export_group("Talking Sound")
-@export var talk_audio: AudioStream = load("res://sounds/voice/random_voice_example.tres")
+@export var talk_audio: AudioStream
+@export_range(0.1, 2.0, 0.1) var talk_pitch: float = 1.0
 @export_subgroup("Random Pitch Range")
-@export_range(-1, 0, 0.1) var lower_limit: float = 0.0
-@export_range(0, 1, 0.1) var upper_limit: float = 0.0
+@export var use_pitch_range: bool = false
+@export_range(0.1, 1.0, 0.1) var lower_limit: float = 1.0
+@export_range(1.0, 2.0, 0.1) var upper_limit: float = 1.0
 
 @onready var dark_box: NinePatchRect = $DarkBox
 @onready var light_box: NinePatchRect = $LightBox
@@ -61,6 +63,8 @@ func _ready():
 	dia_typer.text = text
 	dia_typer.visible_characters = 0
 	dia_typer.talk_audio = talk_audio
+	dia_typer.talk_pitch = talk_pitch
+	dia_typer.use_pitch_range = use_pitch_range
 	dia_typer.lower_limit = lower_limit
 	dia_typer.upper_limit = upper_limit
 	
