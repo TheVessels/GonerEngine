@@ -94,6 +94,7 @@ var type_timer: float = 0.0
 @export var use_pitch_range: bool = false
 @export_range(0.1, 1.0, 0.1) var lower_limit: float = 1.0
 @export_range(1.0, 2.0, 0.1) var upper_limit: float = 1.0
+@export var talk_pitch_calc: Callable
 
 # Gets the text without bbcode or commands
 func get_parsed_text() -> String:
@@ -198,6 +199,9 @@ func _physics_process(delta: float) -> void:
 	
 	if animating and Input.is_action_just_pressed("cancel"):
 		visible_ratio = 1.0
+		if !commands.is_empty():
+			for command in commands:
+				evaluate(command)
 	
 	if pause > 0: pause -= 1
 
@@ -577,6 +581,9 @@ static func draw_char_color(item: RID,
 		colors[0], colors[0], colors[1], colors[1]
 	)
 
+func set_preset(preset: TyperPreset):
+	talk_pitch_calc = preset.talk_pitch
+
 ## Dictionary to register every effect
 static var effects_registry: Dictionary = {
 	"color": ColorTyperEffect.new(),
@@ -591,3 +598,24 @@ static var commands_registry: Dictionary = {
 	"speed": SpeedTyperCommand.new(),
 	"pitch": PitchTyperCommand.new()
 }
+
+@abstract
+class Effect extends RefCounted:
+	@abstract
+	func effect_char(char: Typer.Char, params: Dictionary, time: int) -> Typer.Char
+
+@abstract
+class Command extends RefCounted:
+	# sorry params will always be strings and it's your job to evaluate them
+	# into different types
+	@abstract
+	func execute_code(params: String, typer_ref: Typer)
+
+@abstract
+class Preset extends RefCounted:
+	var faces: SpriteFrames
+	var talk_stream: AudioStream
+	var font: Font
+
+	@abstract
+	func talk_pitch() -> float
