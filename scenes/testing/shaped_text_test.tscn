@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bvmj450iu50f0"]
+
+[ext_resource type="Script" uid="uid://ccjntipwmq2o3" path="res://scenes/testing/shaped_text_test.gd" id="1_i3miw"]
+
+[node name="ShapedTextTest" type="Node2D" unique_id=904571501]
+script = ExtResource("1_i3miw")
