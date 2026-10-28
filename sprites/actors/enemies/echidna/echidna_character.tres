@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="Character" format=3 uid="uid://1fh32b62cykt"]
+
+[ext_resource type="Script" uid="uid://coio6dxiiw8m7" path="res://scripts/classes/character.gd" id="1_nqfxa"]
+[ext_resource type="Texture2D" uid="uid://i37qrqtoxb3" path="res://sprites/actors/enemies/echidna/idle.png" id="2_vw7nq"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_o8mk8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_vw7nq")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[resource]
+script = ExtResource("1_nqfxa")
+name = "Echidna"
+states = Dictionary[String, SpriteFrames]({
+"": SubResource("SpriteFrames_o8mk8")
+})
+metadata/_custom_type_script = "uid://coio6dxiiw8m7"

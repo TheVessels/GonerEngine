@@ -9,6 +9,8 @@ var old_party_z: int
 var old_party_positions: Array[Vector2] = []
 var old_party_facings: Array[Enums.Facing] = []
 
+var enemies: Array[Enemy] = []
+
 @onready var charbox_container: Container = $UI/Foreground/Container
 
 # For now, BattleController will be added as a child of Room
@@ -57,6 +59,7 @@ func _ready() -> void:
 		old_party_positions.append(member.global_position)
 		old_party_facings.append(member.facing)
 	
+	Signals.battle_add_enemy.connect(add_enemy)
 	Signals.battle_end.connect(end_battle)
 	Signals.battle_open_enemy_list.connect(open_enemy_list)
 	Signals.battle_start.emit()
@@ -69,6 +72,10 @@ func get_party_list_node() -> Node2D:
 func battle_intro() -> void:
 	await Cutscene.run(BattleIntro.new(self))
 	Signals.battle_focus_charbox.emit(PartyMember.party_list[0])
+
+func add_enemy(enemy: Enemy) -> void:
+	add_child(enemy)
+	enemies.append(enemy)
 
 func end_battle() -> void:
 	await Cutscene.run(BattleOutro.new(self))
@@ -85,6 +92,7 @@ func end_battle() -> void:
 
 func open_enemy_list() -> void:
 	var enemy_list: Control = enemy_list_scene.instantiate()
+	enemy_list.bc = self
 	$UI/Content.add_child(enemy_list)
 
 func _process(_delta: float) -> void:

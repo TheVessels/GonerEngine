@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://cg5oi0t17j0vu"]
+
+[sub_resource type="GDScript" id="GDScript_uhyov"]
+script/source = "extends Node2D
+
+func _ready() -> void:
+	var actor := Actor.new()
+	actor.chara = load(\"res://sprites/actors/enemies/echidna/echidna_character.tres\")
+	actor.name = \"ECHIDNA\"
+	actor.z_index = 999
+	add_child(actor)
+	actor.position = Vector2(200.0, 200.0)
+"
+
+[node name="ActorSpawnTest" type="Node2D" unique_id=1601857676]
+script = SubResource("GDScript_uhyov")

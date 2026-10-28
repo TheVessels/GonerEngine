@@ -18,6 +18,18 @@ func _run() -> void:
 	for member in PartyMember.party_list:
 		member.play_animation("battle_idle")
 	#await wait(30)
+	
+	spawn_enemy()
+
+func spawn_enemy() -> void:
+	var enemy := Enemy.new()
+	enemy.chara = load("res://sprites/actors/enemies/echidna/echidna_character.tres")
+	enemy.name = "ECHIDNA"
+	# bc.add_child(enemy)
+	enemy.z_as_relative = true
+	enemy.z_index = 999
+	enemy.position = Vector2(200.0, 200.0)
+	bc.add_enemy(enemy)
 
 func run_party_member(member: PartyMember, idx: int) -> void:
 	member.play_animation("battle_intro")

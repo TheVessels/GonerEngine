@@ -20,11 +20,19 @@ func _exit_tree() -> void:
 func _ready() -> void:
 	global_scale = 2.0 * Vector2.ONE
 
-	if sprite == null and has_node("AnimatedSprite2D"):
-		sprite = get_node("AnimatedSprite2D")
+	if sprite == null:
+		if has_node("AnimatedSprite2D"):
+			sprite = get_node("AnimatedSprite2D")
+		else:
+			sprite = AnimatedSprite2D.new()
+			sprite.centered = false
+			add_child(sprite)
 
 	sprite.offset = chara.caterpillar_offset
 	sprite.sprite_frames = chara.get_animation("")
+
+#func _draw():
+	#draw_rect(Rect2(Vector2.ZERO, Vector2(100.0, 100.0)), Color.GREEN)
 
 static func get_by_name(actor_name: String) -> Actor:
 	print(actor_dict)

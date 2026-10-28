@@ -20,13 +20,14 @@ signal party_changed
 
 # For battle
 signal battle_start
+signal battle_add_enemy(enemy: Enemy)
 ## To start the battle ending animation.
 signal battle_end
 ## Emitted once the battle has actually ended.
 signal battle_end_end
 signal battle_focus_charbox(party_member: PartyMember)
 ## Emitted to open EnemyList.
-signal battle_open_enemy_list
+signal battle_open_enemy_list()
 ## Emitted when an enemy has been chosen.
 signal battle_enemy_chosen(enemy: Enemy)
 signal battle_open_hero_list
