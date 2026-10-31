@@ -66,12 +66,13 @@ func _exit_tree() -> void:
 func _ready():
 	face_default_pos = face_sprite.position
 	
-	#dia_typer.caller = self
-	#dia_typer.destroy_caller = true
+	dia_typer.caller = self
+	dia_typer.destroy_caller = true
 	dia_typer.text = text
 	dia_typer.visible_characters = 0
 	dia_typer.talk_audio = talk_audio
 	dia_typer.talk_pitch = talk_pitch
+	dia_typer.start_processing.emit()
 	
 	if Engine.is_editor_hint(): return
 	

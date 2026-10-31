@@ -1,6 +1,8 @@
 @tool
 class_name Typer extends Control
 
+signal start_processing
+
 var time: int = 0
 var time_loopback: int = 1225
 
@@ -13,7 +15,7 @@ var silent_chars: Array[String] = [" ", "^", "!", ".", "?", ",", ":", "/", "\\",
 var current_char: String
 
 var caller: Node
-var destroy_caller := true
+var destroy_caller := false
 
 var pause: int
 var animating := false
@@ -163,11 +165,8 @@ func prepare_spacing():
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	caller = self.get_parent()
-	if caller != null:
-		print("WAAAAAAAAIT I HAVE A PARENT")
-		await caller.ready
-		print("ok im ready")
+	await start_processing
+	
 	prepare_spacing()
 	prepare_lines()
 	queue_redraw()
