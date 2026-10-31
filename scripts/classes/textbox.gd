@@ -9,6 +9,11 @@ class_name TextBox extends Control
 
 @export var dynamic_box: bool = false
 
+@onready var face_sprite: AnimatedSprite2D = $TalkSprite
+var has_face: bool = true
+var face_default_pos: Vector2
+var face_offset: Vector2 = Vector2(0.0, 0.0)
+		
 @onready var dia_typer: Typer = $DialogueText
 @export_multiline("monospace") var text: Array[String] = [""]:
 	set(new):
@@ -23,10 +28,6 @@ class_name TextBox extends Control
 @export_group("Talking Sound")
 @export var talk_audio: AudioStream
 @export_range(0.1, 2.0, 0.1) var talk_pitch: float = 1.0
-@export_subgroup("Random Pitch Range")
-@export var use_pitch_range: bool = false
-@export_range(0.1, 1.0, 0.1) var lower_limit: float = 1.0
-@export_range(1.0, 2.0, 0.1) var upper_limit: float = 1.0
 
 @onready var dark_box: NinePatchRect = $DarkBox
 @onready var light_box: NinePatchRect = $LightBox
@@ -38,6 +39,9 @@ static var has_textbox := false
 var animating: bool = false
 var pause: int = 0
 var text_index: int = 0
+
+var face_default_position: Vector2 = Vector2(69.0, 350.0)
+var current_face: int
 
 # this is actually called a `paragraph` in `RichTextLabel`
 # because each line here means includes wrapped lines
@@ -60,13 +64,14 @@ func _exit_tree() -> void:
 	has_textbox = false
 
 func _ready():
+	face_default_pos = face_sprite.position
+	
+	#dia_typer.caller = self
+	#dia_typer.destroy_caller = true
 	dia_typer.text = text
 	dia_typer.visible_characters = 0
 	dia_typer.talk_audio = talk_audio
 	dia_typer.talk_pitch = talk_pitch
-	dia_typer.use_pitch_range = use_pitch_range
-	dia_typer.lower_limit = lower_limit
-	dia_typer.upper_limit = upper_limit
 	
 	if Engine.is_editor_hint(): return
 	
@@ -76,11 +81,9 @@ func _ready():
 		Global.WorldTypes.WORLD_LIGHT:
 			dark_box.visible = false
 			light_box.visible = true
-			$TalkSprite.set_position(Vector2(64.0, 350.0))
 		Global.WorldTypes.WORLD_DARK:
 			dark_box.visible = true
 			light_box.visible = false
-			$TalkSprite.set_position(Vector2(69.0, 350.0))
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint() or !is_node_ready():
@@ -91,8 +94,24 @@ func _process(_delta: float) -> void:
 			Global.WorldTypes.WORLD_LIGHT:
 				dark_box.visible = false
 				light_box.visible = true
-				$TalkSprite.set_position(Vector2(64.0, 350.0))
 			Global.WorldTypes.WORLD_DARK:
 				dark_box.visible = true
 				light_box.visible = false
-				$TalkSprite.set_position(Vector2(69.0, 350.0))
+
+func set_face_frames(frames: SpriteFrames) -> void:
+	if !frames and has_face:
+		dia_typer.position.x -= 116.0
+		dia_typer.size.x += 116.0
+		has_face = false
+	if frames and !has_face:
+		dia_typer.position.x += 116.0
+		dia_typer.size.x -= 116.0
+		has_face = true
+	face_sprite.sprite_frames = frames
+
+func set_face(face: int) -> void:
+	face_sprite.frame = face
+
+func set_face_offset(offset: Vector2) -> void:
+	face_offset = offset
+	face_sprite.position = face_default_pos + face_offset

@@ -24,6 +24,7 @@ var text_gap := Vector2(8.0, 0.0)
 var line_height: int = 18
 var max_line_chars: int
 var text_lines: PackedStringArray = []
+var broken_text_lines: PackedStringArray = []
 
 var write_condition: bool:
 	get:
@@ -51,6 +52,7 @@ var typer_shader: TyperShader = null
 			queue_redraw()
 			visible_characters = get_parsed_text().length()
 
+@onready var font: Font = self.get_theme_default_font()
 @export var font_size: int = 16:
 	set(new):
 		font_size = new
@@ -90,11 +92,12 @@ var type_timer: float = 0.0
 @export_group("Talking Sound")
 @export var talk_audio: AudioStream
 @export_range(0.1, 2.0, 0.1) var talk_pitch: float = 1.0
-@export_subgroup("Random Pitch Range")
-@export var use_pitch_range: bool = false
-@export_range(0.1, 1.0, 0.1) var lower_limit: float = 1.0
-@export_range(1.0, 2.0, 0.1) var upper_limit: float = 1.0
-@export var talk_pitch_calc: Callable
+@export var talk_volume: float = 1.0
+var talk_pitch_calc: Callable =\
+	func():
+		return 1.0
+var talk_freq: int = 1
+var talk_sound_timer: int = 0
 
 # Gets the text without bbcode or commands
 func get_parsed_text() -> String:
@@ -142,15 +145,15 @@ func add_linebreaks():
 				
 			char_count += 1
 		new_text_lines.append_array(break_text.c_escape().split("\\n"))
-	text_lines = new_text_lines
+	broken_text_lines = new_text_lines
 
 func prepare_lines():
 	var commanded_text = parse_commands()
 	text_lines = commanded_text.c_escape().split("\\n")
 	add_linebreaks()
-	for i in text_lines.size():
-		var unescaped_text = text_lines.get(i).c_unescape()
-		text_lines.set(i, unescaped_text)
+	for i in broken_text_lines.size():
+		var unescaped_text = broken_text_lines.get(i).c_unescape()
+		broken_text_lines.set(i, unescaped_text)
 
 func prepare_spacing():
 	line_height = 18 * (font_size / 16)
@@ -165,17 +168,18 @@ func _ready() -> void:
 		print("WAAAAAAAAIT I HAVE A PARENT")
 		await caller.ready
 		print("ok im ready")
-		
 	prepare_spacing()
 	prepare_lines()
 	queue_redraw()
 	
 	self.resized.connect(
 		func():
-			prepare_lines()
+			add_linebreaks()
+			for i in broken_text_lines.size():
+				var unescaped_text = broken_text_lines.get(i).c_unescape()
+				broken_text_lines.set(i, unescaped_text)
 	)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
 	max_line_chars = floor(self.size.x / text_gap.x)
 	
@@ -245,9 +249,9 @@ func _draw() -> void:
 	# the position where the top left of the text should start
 	var pos := Vector2(0, 0)
 	
-	# loop through each line in text_lines
-	for j in text_lines.size():
-		var line: String = text_lines.get(j)
+	# loop through each line in broken_text_lines
+	for j in broken_text_lines.size():
+		var line: String = broken_text_lines.get(j)
 		
 		# loop over each character in the line
 		for i in line.length():
@@ -292,7 +296,7 @@ func _draw() -> void:
 				char = 2
 			
 			var typer_char: Char = Char.new(
-				get_theme_default_font(),
+				font,
 				pos + (text_gap * char),
 				Vector2(0.0, 0.0),
 				ch,
@@ -323,8 +327,8 @@ func _draw() -> void:
 class CommandInfo:
 	var index: int
 	var command_name: String
-	var command_params: String
-	func _init(idx: int, cmd_name: String, cmd_params: String):
+	var command_params: Array
+	func _init(idx: int, cmd_name: String, cmd_params: Array):
 		index = idx
 		command_name = cmd_name
 		command_params = cmd_params
@@ -335,7 +339,7 @@ func remove_bbcode(txt: String) -> String:
 	regex.compile("\\[.*?\\]")
 	var text_without_tags = regex.sub(txt, "", true)
 	return text_without_tags
-	
+
 var commands: Array[CommandInfo] = []
 # Gets all the commands inside the dia text and adds them to the list of commands
 # while also removing them from the commanded_text
@@ -362,7 +366,7 @@ func parse_commands() -> String:
 		var params_close_index = tag_content.findn(")")
 		if params_close_index == -1: break
 		
-		var command_params = tag_content.substr(params_open_index+1, params_close_index-1-params_open_index)
+		var command_params = Array(tag_content.substr(params_open_index+1, params_close_index-1-params_open_index).remove_chars(" ").split(","))
 		var command_name = tag_content.substr(0, params_open_index)
 		
 		var command = CommandInfo.new(left_index, command_name, command_params)
@@ -375,7 +379,7 @@ func evaluate(command_info: CommandInfo) -> void:
 	
 	commands.remove_at(0)
 
-func write_char():	
+func write_char():
 	# Check if the index of the char you're about to write has a command queued for it
 	if commands:
 		while !commands.is_empty() and visible_characters == commands[0].index:
@@ -384,19 +388,20 @@ func write_char():
 		visible_characters += frame_char_amount
 		visible_characters = clamp(visible_characters, 0, get_parsed_text().length())
 		current_char = get_parsed_text()[visible_characters-1]
-		if !silent_chars.has(current_char) and talk_audio:
+		talk_sound_timer -= 1
+		if !silent_chars.has(current_char) and talk_audio and talk_sound_timer <= 0:
 			play_talk_sound()
-		type_timer = 1.0
+			talk_sound_timer = talk_freq
+	
+	type_timer = 1.0
 
 func play_talk_sound():
 	var player = AudioStreamPlayer.new()
 	player.stream = talk_audio
+	player.volume_linear = talk_volume
 	
-	if use_pitch_range:
-		var pitch_offset = randf_range(lower_limit, upper_limit)
-		player.pitch_scale *= pitch_offset
-	else:
-		player.pitch_scale = talk_pitch
+	player.pitch_scale = talk_pitch_calc.call()
+	player.pitch_scale *= talk_pitch
 	
 	player.finished.connect(
 		func():
@@ -581,9 +586,6 @@ static func draw_char_color(item: RID,
 		colors[0], colors[0], colors[1], colors[1]
 	)
 
-func set_preset(preset: TyperPreset):
-	talk_pitch_calc = preset.talk_pitch
-
 ## Dictionary to register every effect
 static var effects_registry: Dictionary = {
 	"color": ColorTyperEffect.new(),
@@ -596,26 +598,12 @@ static var effects_registry: Dictionary = {
 static var commands_registry: Dictionary = {
 	"wait": WaitTyperCommand.new(),
 	"speed": SpeedTyperCommand.new(),
-	"pitch": PitchTyperCommand.new()
+	"pitch": PitchTyperCommand.new(),
+	"face": FaceTyperCommand.new(),
+	"preset": PresetTyperCommand.new()
 }
-
-@abstract
-class Effect extends RefCounted:
-	@abstract
-	func effect_char(char: Typer.Char, params: Dictionary, time: int) -> Typer.Char
-
-@abstract
-class Command extends RefCounted:
-	# sorry params will always be strings and it's your job to evaluate them
-	# into different types
-	@abstract
-	func execute_code(params: String, typer_ref: Typer)
-
-@abstract
-class Preset extends RefCounted:
-	var faces: SpriteFrames
-	var talk_stream: AudioStream
-	var font: Font
-
-	@abstract
-	func talk_pitch() -> float
+## Dictionary to register every preset
+static var presets_registry: Dictionary = {
+	"susie": SusieTyperPreset.new(),
+	"tenna": TennaTyperPreset.new()
+}

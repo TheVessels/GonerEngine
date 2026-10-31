@@ -1,0 +1,26 @@
+[gd_resource type="AudioStreamRandomizer" format=3 uid="uid://cgoupenla00dl"]
+
+[ext_resource type="AudioStream" uid="uid://5fd7is3xx3yc" path="res://sounds/voice/tenna_blips/snd_tv_voice_short.wav" id="1_iidcw"]
+[ext_resource type="AudioStream" uid="uid://m0mhafntivgd" path="res://sounds/voice/tenna_blips/snd_tv_voice_short_2.wav" id="2_kjpoq"]
+[ext_resource type="AudioStream" uid="uid://dapohg1k66dwj" path="res://sounds/voice/tenna_blips/snd_tv_voice_short_3.wav" id="3_qkd1k"]
+[ext_resource type="AudioStream" uid="uid://cfqlql0cko475" path="res://sounds/voice/tenna_blips/snd_tv_voice_short_4.wav" id="4_won76"]
+[ext_resource type="AudioStream" uid="uid://bs2084wwdggvh" path="res://sounds/voice/tenna_blips/snd_tv_voice_short_5.wav" id="5_exvma"]
+[ext_resource type="AudioStream" uid="uid://cyg2bfgp3vdn0" path="res://sounds/voice/tenna_blips/snd_tv_voice_short_6.wav" id="6_38uo1"]
+[ext_resource type="AudioStream" uid="uid://bci2alqljjown" path="res://sounds/voice/tenna_blips/snd_tv_voice_short_7.wav" id="7_1di0b"]
+[ext_resource type="AudioStream" uid="uid://eaiufkvnb1xr" path="res://sounds/voice/tenna_blips/snd_tv_voice_short_8.wav" id="8_yqaqa"]
+[ext_resource type="AudioStream" uid="uid://b634ulyaxd3xs" path="res://sounds/voice/tenna_blips/snd_tv_voice_short_9.wav" id="9_85bl2"]
+[ext_resource type="AudioStream" uid="uid://bhxuymb3g105v" path="res://sounds/voice/tenna_blips/snd_tv_voice_short_10.wav" id="10_djxs4"]
+
+[resource]
+playback_mode = 1
+streams_count = 10
+stream_0/stream = ExtResource("1_iidcw")
+stream_1/stream = ExtResource("2_kjpoq")
+stream_2/stream = ExtResource("3_qkd1k")
+stream_3/stream = ExtResource("4_won76")
+stream_4/stream = ExtResource("5_exvma")
+stream_5/stream = ExtResource("6_38uo1")
+stream_6/stream = ExtResource("7_1di0b")
+stream_7/stream = ExtResource("8_yqaqa")
+stream_8/stream = ExtResource("9_85bl2")
+stream_9/stream = ExtResource("10_djxs4")

@@ -3,8 +3,9 @@
 [ext_resource type="Script" uid="uid://cx1nqx718bnfa" path="res://scripts/classes/textbox.gd" id="1_hyn88"]
 [ext_resource type="PackedScene" uid="uid://tw5hkjn0a81b" path="res://scenes/ui/dark_box.tscn" id="2_fto3e"]
 [ext_resource type="PackedScene" uid="uid://d1tmmpanucxap" path="res://scenes/ui/light_box.tscn" id="3_seire"]
-[ext_resource type="Texture2D" uid="uid://bu708k77nhnyg" path="res://sprites/actors/susie/faces/sincere.png" id="4_hdjaa"]
+[ext_resource type="SpriteFrames" uid="uid://dht8joubf75js" path="res://sprites/faces/susie/susie_faces.tres" id="5_fto3e"]
 [ext_resource type="AudioStream" uid="uid://b2y0nkg6g0lnd" path="res://sounds/voice/susie.wav" id="7_fto3e"]
+[ext_resource type="Texture2D" uid="uid://d1osc78lg7kws" path="res://sprites/references/dmkreferencedark.png" id="7_seire"]
 [ext_resource type="Script" uid="uid://bpgmegg2lddas" path="res://scripts/classes/typer.gd" id="9_hdjaa"]
 
 [node name="Textbox" type="Control" unique_id=810857812]
@@ -21,8 +22,8 @@ talk_audio = ExtResource("7_fto3e")
 layout_mode = 0
 offset_left = 24.0
 offset_top = 312.0
-offset_right = 618.0
-offset_bottom = 480.0
+offset_right = 617.0
+offset_bottom = 479.0
 
 [node name="LightBox" parent="." unique_id=1111038318 instance=ExtResource("3_seire")]
 visible = false
@@ -32,14 +33,10 @@ offset_top = 320.0
 offset_right = 610.0
 offset_bottom = 472.0
 
-[node name="TalkSprite" type="TextureRect" parent="." unique_id=1788532552]
-layout_mode = 0
-offset_left = 69.0
-offset_top = 350.0
-offset_right = 114.0
-offset_bottom = 401.0
+[node name="TalkSprite" type="AnimatedSprite2D" parent="." unique_id=200280780]
+position = Vector2(119, 401)
 scale = Vector2(2, 2)
-texture = ExtResource("4_hdjaa")
+sprite_frames = ExtResource("5_fto3e")
 
 [node name="DialogueText" type="Control" parent="." unique_id=785439090]
 custom_minimum_size = Vector2(400, 96)
@@ -50,6 +47,8 @@ offset_right = 574.0
 offset_bottom = 453.0
 script = ExtResource("9_hdjaa")
 font_size = 32
+visible_characters = 0
+visible_ratio = 0.0
 talk_audio = ExtResource("7_fto3e")
 metadata/_custom_type_script = "uid://bpgmegg2lddas"
 
@@ -62,3 +61,8 @@ centered = false
 
 [node name="Reflight" type="Sprite2D" parent="References" unique_id=1288829259]
 centered = false
+
+[node name="dmkref" type="Sprite2D" parent="." unique_id=1397587093]
+visible = false
+position = Vector2(320.5, 395)
+texture = ExtResource("7_seire")
