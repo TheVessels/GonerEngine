@@ -4,6 +4,13 @@ extends Control
 var party_member: PartyMember
 var charcolor: Color
 
+func _input(event: InputEvent) -> void:
+	if Global.in_battle and event.is_action_pressed("cancel"):
+		Global.battle_controller.select_previous_hero()
+
+func deactivate() -> void:
+	$Ctrl.is_selected = false
+
 func activate() -> void:
 	$Ctrl.is_selected = true
 	$BattleButtons.activate()

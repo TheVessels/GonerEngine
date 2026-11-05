@@ -2,6 +2,8 @@ class_name Actor extends CharacterBody2D
 ## Anyone who can be controlled
 ## by a cutscene.
 
+const FLASH_MATERIAL: ShaderMaterial = preload("uid://0xs0cwcj1jbg")
+
 @export var chara: Character
 
 var sprite: AnimatedSprite2D = null
@@ -83,3 +85,11 @@ func get_current_texture() -> Texture2D:
 
 func get_sprite_offset() -> Vector2:
 	return sprite.offset
+
+func set_flash(flash: bool) -> void:
+	if flash:
+		var mat: ShaderMaterial = FLASH_MATERIAL
+		mat.set_shader_parameter("start_time", Time.get_ticks_msec() / 1000.0)
+		sprite.material = mat
+	else:
+		sprite.material = null

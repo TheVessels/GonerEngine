@@ -8,6 +8,7 @@ var mus_track_position: float
 
 var moveable := true
 var in_battle := false
+var battle_controller: BattleController = null
 
 # Documentation is here:
 # https://store.steampowered.com/app/1671210/DELTARUNE/

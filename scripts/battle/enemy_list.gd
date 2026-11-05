@@ -3,6 +3,15 @@ extends Control
 const enemy_entry_scene: PackedScene = preload("uid://novrldco8cny")
 
 var bc: BattleController
+var action: HeroAction
+
+func close() -> void:
+	bc.focus_previous()
+	queue_free()
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("cancel"):
+		close()
 
 func _ready() -> void:
 	if bc == null:
@@ -16,6 +25,7 @@ func _ready() -> void:
 	for enemy in bc.enemies:
 		var entry := enemy_entry_scene.instantiate()
 		entry.enemy = enemy
+		entry.bc = bc
 		$VBoxContainer.add_child(entry)
 		entries.append(entry)
 	

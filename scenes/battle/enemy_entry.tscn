@@ -45,3 +45,7 @@ fill_color = Color(1, 1, 0, 1)
 background_color = Color(1, 0.3137255, 0.12156863, 1)
 text_color = Color(0.5019608, 0, 0, 1)
 metadata/_custom_type_script = "uid://dbdww1nds0jky"
+
+[connection signal="focus_entered" from="." to="." method="_on_focus_entered"]
+[connection signal="focus_exited" from="." to="." method="_on_focus_exited"]
+[connection signal="pressed" from="." to="." method="_on_pressed"]

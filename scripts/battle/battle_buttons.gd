@@ -35,8 +35,11 @@ func _process(_delta: float) -> void:
 	last_focused = null
 
 func _on_fight_pressed() -> void:
-	Signals.battle_open_enemy_list.emit()
-	var enemy: Enemy = await Signals.battle_enemy_chosen
+	#Signals.battle_open_enemy_list.emit()
+	#var enemy: Enemy = await Signals.battle_enemy_chosen
+	var action := HeroAction.Attack.new()
+	Global.battle_controller.last_focused = $Fight
+	Global.battle_controller.open_enemy_list(charbox.get_index(), action)
 
 func _on_act_tech_pressed() -> void:
 	pass # Replace with function body.

@@ -4,12 +4,19 @@ class_name BattleController extends Node2D
 const battle_controller_scene: PackedScene = preload("uid://bsn3lnx86eo3e")
 const enemy_list_scene: PackedScene = preload("uid://oj1cx36ou5oj")
 
+# Used when going back from menus
+var last_focused: Control = null
+
 var old_moveable: bool
 var old_party_z: int
 var old_party_positions: Array[Vector2] = []
 var old_party_facings: Array[Enums.Facing] = []
 
 var enemies: Array[Enemy] = []
+
+var num_heroes: int
+var selected_hero_idx: int = 0
+var hero_actions: Array[HeroAction] = []
 
 @onready var charbox_container: Container = $UI/Foreground/Container
 
@@ -38,6 +45,9 @@ func get_hero_pos(idx: int, n_members: int) -> Vector2:
 	
 	return global_position + Vector2(hero_x, hero_y)
 
+func _enter_tree() -> void:
+	Global.battle_controller = self
+
 func _ready() -> void:
 	if Global.in_battle:
 		queue_free()
@@ -59,6 +69,9 @@ func _ready() -> void:
 		old_party_positions.append(member.global_position)
 		old_party_facings.append(member.facing)
 	
+	num_heroes = party_list.get_child_count()
+	hero_actions.resize(num_heroes)
+
 	Signals.battle_add_enemy.connect(add_enemy)
 	Signals.battle_end.connect(end_battle)
 	Signals.battle_open_enemy_list.connect(open_enemy_list)
@@ -90,10 +103,30 @@ func end_battle() -> void:
 	party_list.z_index = old_party_z
 	queue_free()
 
-func open_enemy_list() -> void:
+func open_enemy_list(hero_idx: int, action: HeroAction) -> void:
 	var enemy_list: Control = enemy_list_scene.instantiate()
 	enemy_list.bc = self
+	enemy_list.action = action
 	$UI/Content.add_child(enemy_list)
+
+func set_current_hero_action(action: HeroAction) -> void:
+	hero_actions[selected_hero_idx] = action
+	select_next_hero()
+
+func select_next_hero() -> void:
+	if selected_hero_idx >= num_heroes - 1:
+		return
+	selected_hero_idx += 1
+	charbox_container.activate(selected_hero_idx)
+
+func select_previous_hero() -> void:
+	if selected_hero_idx <= 0:
+		return
+	selected_hero_idx -= 1
+	charbox_container.activate(selected_hero_idx)
+
+func focus_previous() -> void:
+	last_focused.grab_focus()
 
 func _process(_delta: float) -> void:
 	global_position = WorldCamera.get_pos()

@@ -3,8 +3,12 @@ extends Container
 
 const CHARBOX_SCENE: PackedScene = preload("uid://7r3lp84po220")
 
-func activate() -> void:
-	get_child(0).activate()
+func activate(charbox_idx: int = 0) -> void:
+	for i in range(get_child_count()):
+		if i == charbox_idx:
+			get_child(i).activate()
+		else:
+			get_child(i).deactivate()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
