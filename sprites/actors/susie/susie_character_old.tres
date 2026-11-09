@@ -6,4 +6,6 @@
 script = ExtResource("1_yfuhb")
 name = "Susie"
 caterpillar_offset = Vector2(-3, -6)
+attack_background_color = null
+attack_target_color = null
 metadata/_custom_type_script = "uid://coio6dxiiw8m7"

@@ -3,10 +3,17 @@
 [ext_resource type="SpriteFrames" uid="uid://djkn6hdw6v6my" path="res://sprites/actors/susie/susie_dw_animations.tres" id="1_dkh4m"]
 [ext_resource type="Script" uid="uid://coio6dxiiw8m7" path="res://scripts/classes/character.gd" id="1_ifq0d"]
 [ext_resource type="Script" uid="uid://d0j1pw74fag0i" path="res://scripts/classes/character_stats.gd" id="1_iogtn"]
+[ext_resource type="Texture2D" uid="uid://0gu72c6f42pd" path="res://sprites/actors/susie/battle/head_6.png" id="1_pdcc2"]
+[ext_resource type="Texture2D" uid="uid://dlfn5kfwvbwjh" path="res://sprites/actors/susie/battle/head_1.png" id="2_b4qhf"]
 [ext_resource type="Texture2D" uid="uid://xxjtv5vohr35" path="res://sprites/actors/susie/battle/head_0.png" id="2_mkdqo"]
 [ext_resource type="SpriteFrames" uid="uid://ud88elqkjb4u" path="res://sprites/actors/susie/susie_lw_animations.tres" id="2_xwwpk"]
+[ext_resource type="Texture2D" uid="uid://b52j34w05n4dm" path="res://sprites/actors/susie/battle/head_4.png" id="3_6ek0m"]
 [ext_resource type="Texture2D" uid="uid://hyw8o7cyddpw" path="res://sprites/actors/susie/battle/name.png" id="3_26rfh"]
+[ext_resource type="Texture2D" uid="uid://bwn6utao6gjab" path="res://sprites/actors/susie/battle/head_5.png" id="4_wg457"]
 [ext_resource type="SpriteFrames" uid="uid://bag11m8v7yefp" path="res://sprites/actors/susie/susie_lw_unhappy_animations.tres" id="4_xwwpk"]
+[ext_resource type="Texture2D" uid="uid://bc71ecfrqndfk" path="res://sprites/actors/susie/battle/head_3.png" id="5_fqev0"]
+[ext_resource type="Texture2D" uid="uid://qj35ud8ryj4o" path="res://sprites/actors/susie/battle/head_2.png" id="6_i6rk1"]
+[ext_resource type="Texture2D" uid="uid://d2gwvi6uxgssh" path="res://sprites/actors/susie/battle/head_10.png" id="8_swu7i"]
 
 [sub_resource type="Resource" id="Resource_xwwpk"]
 script = ExtResource("1_iogtn")
@@ -23,7 +30,16 @@ states = Dictionary[String, SpriteFrames]({
 "light_unhappy": ExtResource("4_xwwpk")
 })
 color = Color(1, 0, 1, 1)
-face_image = ExtResource("2_mkdqo")
 name_image = ExtResource("3_26rfh")
 default_stats = SubResource("Resource_xwwpk")
+attack_background_color = Color(0.5019608, 0, 0.5019608, 1)
+attack_target_color = Color(0.91764706, 0.4745098, 0.78431374, 1)
+battle_head_normal = ExtResource("2_mkdqo")
+battle_head_hurt = ExtResource("4_wg457")
+battle_head_attack = ExtResource("2_b4qhf")
+battle_head_act = ExtResource("1_pdcc2")
+battle_head_magic = ExtResource("6_i6rk1")
+battle_head_item = ExtResource("5_fqev0")
+battle_head_spare = ExtResource("8_swu7i")
+battle_head_defend = ExtResource("3_6ek0m")
 metadata/_custom_type_script = "uid://coio6dxiiw8m7"

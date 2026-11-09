@@ -8,6 +8,8 @@
 [sub_resource type="Resource" id="Resource_r7558"]
 script = ExtResource("3_7qx52")
 name = "susie"
+attack_background_color = null
+attack_target_color = null
 metadata/_custom_type_script = "uid://coio6dxiiw8m7"
 
 [node name="ActorTest" type="Node2D" unique_id=231228869]

@@ -14,12 +14,32 @@ class_name Character extends Resource
 @export_group("Party Member")
 ## The color shown in the menu and in battle.
 @export var color: Color
-## The face texture shown in the menu and in battle.
-@export var face_image: Texture2D
 ## The texture for the character's name, shown in the menu and in battle.
 @export var name_image: Texture2D
 ## The default stats for the character (HP, ATK, etc.).
 @export var default_stats: CharacterStats
+
+@export_subgroup("Additional Colors")
+@export var attack_background_color: Color = color
+@export var attack_target_color: Color = color
+
+@export_subgroup("Battle Heads", "battle_head_")
+## The head texture shown in the menu and in battle.
+@export var battle_head_normal: Texture2D
+## The head shown when hit in battle.
+@export var battle_head_hurt: Texture2D
+## The head shown when attacking in battle.
+@export var battle_head_attack: Texture2D
+## The head shown when acting in battle.
+@export var battle_head_act: Texture2D
+## The head shown when using magic in battle (unused for Kris).
+@export var battle_head_magic: Texture2D
+## The head shown when using an item in battle.
+@export var battle_head_item: Texture2D
+## The head shown when sparing in battle.
+@export var battle_head_spare: Texture2D
+## The head shown when defending in battle.
+@export var battle_head_defend: Texture2D
 
 # @export var animation: SpriteFrames
 
